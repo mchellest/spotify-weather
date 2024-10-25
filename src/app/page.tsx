@@ -1,11 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import useSpotifyAuth from '@/app/components/hooks/useSpotifyAuth';
+import { spotifyUserDataRequest } from '@/app/lib/requests';
+// Hooks
 import { useLocalStorage } from '@/app/components/hooks/useLocalStorage';
+import useSpotifyAuth from '@/app/components/hooks/useSpotifyAuth';
+import useSpotifyApis from '@/app/components/hooks/useSpotifyApis';
+import useWeatherApi from '@/app/components/hooks/useWeatherApi';
+// Components
 import WeatherCard from '@/app/components/_Weather/WeatherCard';
 import SpotifyCard from '@/app/components/_Spotify/SpotifyCard';
 import CustomButton from '@/app/components/CustomButton';
+// Icons
 import { Rotate, CheckmarkFilled, CheckmarkFilledError, Login, Logout, Erase, Renew } from '@carbon/icons-react'
 
 export default function Home() {
@@ -13,10 +19,16 @@ export default function Home() {
   // Weather state variables
   const [locationPerms, setLocationPerms] = useState<string>("");
   const [userCoordinates, setUserCoordinates] = useLocalStorage("userCoordinates", "{ lat:null, lon:null }");
+  const [weatherData, isWeatherLoading, weatherError] = useWeatherApi({
+    url: 'https://api.openweathermap.org/data/2.5/weather?',
+    options: {},
+    params: { lat: userCoordinates.lat, lon: userCoordinates.lon }
+  })
   const [validLocationPerms, setValidLocationPerms] = useState<boolean | null>(null);
   // Spotify state variables
+  const { handleLoginWithSpotify, handleRefreshToken, handleLogoutOfSpotify  } = useSpotifyAuth();
+  const [spotifyData, isSpotifyLoading, spotifyError] = useSpotifyApis(spotifyUserDataRequest);
   const [spotifyConn, setSpotifyConn] = useState<boolean | null>(null);
-  const { handleLoginWithSpotify, handleRefreshToken, handleLogoutOfSpotify, spotifyAuthData } = useSpotifyAuth();
 
   useEffect(() => {
     // On render, check localStorage for Spotify information since we will be redirected back to this page
@@ -30,10 +42,6 @@ export default function Home() {
     if(userCoordinates.lat && userCoordinates.lon)
       setValidLocationPerms(true);
   }, []);
-
-  useEffect(() => {
-    console.log('isDataReady changed!', isDataReady);
-  }, [isDataReady])
 
   useEffect(() => {
     if(["granted"].includes(locationPerms) && (userCoordinates.lat && userCoordinates.lon)) {
@@ -81,17 +89,31 @@ export default function Home() {
     // setTimeout(() => {
       console.log("Animation complete");
       setIsDataReady(true);
-    // }, 2500);
+    // }, 500);
   }
 
   return (
     <>
       <div className="flex items-end" data-testid="options-nav">
-        <CustomButton 
-            icon={<Logout />} 
-            onclick={handleLogoutOfSpotify}
-            text={""} 
-          />
+        {spotifyData && <>
+          <div>
+            {spotifyData.display_name}
+            {<img src={spotifyData.images[0].url} height="15%" width="15%" />}
+          </div>
+          <div>
+            {spotifyError && spotifyError.status === 401 &&
+              <CustomButton 
+                icon={<Renew />} 
+                onclick={handleRefreshToken}
+                text={""} 
+              />}
+            <CustomButton 
+              icon={<Logout />} 
+              onclick={handleLogoutOfSpotify}
+              text={""} 
+            />
+          </div>
+        </>}
       </div>
       <div className="flex items-center justify-center w-screen h-screen mx-auto">
         <div className="basis-1/2 rounded-md w-1/2 h-3/4 bg-white bg-opacity-5 sm:text-blue sm:min-w-[65%]">
@@ -135,8 +157,8 @@ export default function Home() {
             </div>}
             {isDataReady && 
               <>
-                <WeatherCard lat={userCoordinates.lat} lon={userCoordinates.lon} />
-                <SpotifyCard />
+                <WeatherCard data={weatherData} isLoading={isWeatherLoading} />
+                <SpotifyCard isSpotifyLoading={isSpotifyLoading} spotifyData={spotifyData} spotifyError={spotifyError} handleRefreshToken={handleRefreshToken} />
               </>}
         </div>
       </div>

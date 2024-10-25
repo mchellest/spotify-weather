@@ -1,23 +1,21 @@
 'use client';
 
-import React, { Suspense, useEffect } from 'react';
-import { weatherRequest } from '@/app/lib/requests';
+import React, { Suspense } from 'react';
 import WeatherData from '@/app/components/_Weather/WeatherData';
-import useWeatherApi from '@/app/components/hooks/useWeatherApi';
 import { CardsSkeleton } from '@/app/components/skeletons';
 
 interface weatherProps {
-  lat: number,
-  lon: number
+  data: {
+    name: string,
+    weather: any,
+    main: { temp: number },
+    wind: { speed: number }
+  },
+  isLoading: boolean
 }
 
 const WeatherCard = (props: weatherProps) => {
-  const { lat, lon } = props;
-  const [data, isLoading, error] = useWeatherApi({
-    url: 'https://api.openweathermap.org/data/2.5/weather?',
-    options: {},
-    params: { lat: lat, lon: lon }
-  });
+  const { data, isLoading } = props;
 
   return (
     <div className="flex justify-between content-stretch"

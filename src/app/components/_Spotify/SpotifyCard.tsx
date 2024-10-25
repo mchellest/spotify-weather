@@ -3,24 +3,22 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import CustomButton from '@/app/components/CustomButton';
 import { CardsSkeleton } from '@/app/components/skeletons';
-import { spotifyUserDataRequest, spotifyUserTopItems, spotifyRecommendations } from '@/app/lib/requests';
+import { spotifyUserTopItems, spotifyRecommendations } from '@/app/lib/requests';
 import { Renew } from '@carbon/icons-react';
-import useSpotifyAuth from '@/app/components/hooks/useSpotifyAuth';
+// import useSpotifyAuth from '@/app/components/hooks/useSpotifyAuth';
 import useSpotifyApis from '@/app/components/hooks/useSpotifyApis';
-import useSpotifyApi from '../hooks/useSpotifyApi';
 
 const SpotifyData = React.lazy(() => import ('@/app/components/_Spotify/SpotifyData'));
 
 interface SpotifyCardProps {
-  // mappedWeatherData: {
-    
-  // }
+  isSpotifyLoading: boolean,
+  spotifyData: object,
+  spotifyError: any,
+  handleRefreshToken: any
 }
 
 const SpotifyCard = (props: SpotifyCardProps) => {
-  // const { data } = props;
-  const { handleRefreshToken } = useSpotifyAuth();
-  const [data, isLoading, error] = useSpotifyApis(spotifyUserDataRequest);
+  const { isSpotifyLoading, spotifyData, spotifyError, handleRefreshToken } = props;
   const [topItemsData, isTopItemsLoading, topItemsError] = useSpotifyApis(spotifyUserTopItems);
   // const [recData, isRecLoading, recError] = useSpotifyApis(spotifyRecommendations({
 
@@ -38,7 +36,7 @@ const SpotifyCard = (props: SpotifyCardProps) => {
     return (
       <div>
         <h1>Logged in as {data.display_name}</h1>
-        <img src={data.images[0].url} height={data.images[0].height} width={data.images[0].height} />
+        <img src={data.images[0].url} height="10%" width="10%" />
       </div>
     );
   }
@@ -51,21 +49,19 @@ const SpotifyCard = (props: SpotifyCardProps) => {
     return <ul>listRecommendedTracks</ul>;
   }
 
-  const handleRefreshAfterError = () => {
-    handleRefreshToken();
-  };
 
   return (
     <div className="p-5 text-sm">
-      {error && error.status === 401 &&
+      {spotifyError && spotifyError.status === 401 &&
         <CustomButton 
           icon={<Renew />} 
-          onclick={handleRefreshAfterError}
+          onclick={handleRefreshToken}
           text={"Refresh Token"} 
         />
       }
-      {isLoading && <CardsSkeleton />}
-      {!isLoading && data && displayUserData(data)}
+      {isSpotifyLoading && <CardsSkeleton />}
+      {!isSpotifyLoading && spotifyData && displayUserData(spotifyData)}
+      {!isTopItemsLoading && topItemsData && filterTopItems(topItemsData)}
       {/* <Suspense fallback={<CardsSkeleton />}>
         <p>{JSON.stringify(topItems)}</p>
       </Suspense> */}
