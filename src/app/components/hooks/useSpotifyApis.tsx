@@ -19,10 +19,8 @@ const useSpotifyApis = (props: spotifyApiRequest) => {
     return urlObject.toString();
   }
 
-  const fetchData = async (signal: AbortSignal) => {
-    console.log("fetchData");
+  const fetchData = useCallback(async (signal: AbortSignal)  => {
     const fullUrl = await parseParameters(url, params);
-    console.log(fullUrl);
     const response = await fetch(fullUrl, {
       signal: signal,
       method: method,
@@ -30,7 +28,7 @@ const useSpotifyApis = (props: spotifyApiRequest) => {
     });
 
     return await response.json();
-  }
+  }, [url]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -56,7 +54,7 @@ const useSpotifyApis = (props: spotifyApiRequest) => {
 
     }
     return () => controller.abort();
-  }, [url]);
+  }, [fetchData]);
 
   return [data, isLoading, error];
 }
