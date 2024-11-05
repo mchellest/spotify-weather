@@ -1,15 +1,17 @@
-export const weatherRequest = (lat: number, lon: number): { url: string, options: object, params: object } => {
+import { spotifyApiRequest, weatherApiRequest } from "@/app/lib/d";
+
+export const weatherRequest = (lat: number, lon: number): weatherApiRequest => {
   return {
     url: 'https://api.openweathermap.org/data/2.5/weather?',
     options: {},
     params: { lat: lat, lon: lon }
   }
 };
-export const spotifyUserDataRequest = {
+export const spotifyUserDataRequest: spotifyApiRequest = {
     url: "https://api.spotify.com/v1/me",
-    method : "GET" as const,
+    method: "GET" as const,
 }
-export const spotifyUserTopItems = {
+export const spotifyUserTopItems: spotifyApiRequest = {
     url: 'https://api.spotify.com/v1/me/top/artists',
     method: "GET" as const,
 }
@@ -54,7 +56,7 @@ export const spotifyRecommendations = (
     seed_genres?: string,
     seed_tracks?: string    
   }
-): { url: string, method: string, params: object } => {
+): spotifyApiRequest => {
   return {
     url: 'https://api.spotify.com/v1/recommendations',
     method: "GET" as const,

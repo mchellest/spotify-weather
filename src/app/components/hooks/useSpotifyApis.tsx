@@ -1,17 +1,13 @@
-import { useState, useEffect } from 'react';
-interface apiProps {
-  url: string,
-  method?: 'GET' | 'POST',
-  params?: object | null
-}
+import { useCallback, useState, useEffect } from 'react';
+import { spotifyApiRequest } from '@/app/lib/d';
 
-const useSpotifyApis = (props: apiProps) => {
+const useSpotifyApis = (props: spotifyApiRequest) => {
   const { url, method, params } = props;
   const [data, setData] = useState<object | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
 
-  const parseParameters = async (url: string, params: object) => {
+  const parseParameters = async (url: string, params: object | null | undefined) => {
     const urlObject = new URL(url);
     if (!params || Object.keys(params).length === 0) {
       return urlObject.toString();

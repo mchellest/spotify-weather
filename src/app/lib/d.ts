@@ -1,3 +1,17 @@
+// Weather related Interfaces
+export interface weatherApiRequest {
+  url: string,
+  options?: {
+    method: "POST" | "GET" | undefined, // fetch will default to GET
+    body: object | undefined
+  } | {} | undefined,
+  params?: {
+    lat: number,
+    lon: number,
+    appid: string
+  } | {} | undefined // TODO specify body of Spotify Api call
+}
+
 export interface weaterApiData {
   weather: [{main: string, description: string}],
   main: {temp: number, feels_like: number, pressure: number, humidity: number},
@@ -8,10 +22,13 @@ export interface weaterApiData {
   name: string
 }
 
-// export interface spotifyApiData {
+// Spotify related Interfaces
+export interface spotifyApiRequest {
+  url: string,
+  method?: 'GET' | 'POST',
+  params?: object | null
+}
 
-// }
-// Spotify types
 export interface Artist {
   external_urls: object,
   href: string,

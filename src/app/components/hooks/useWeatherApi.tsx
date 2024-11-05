@@ -1,24 +1,11 @@
 import { useState, useEffect } from 'react';
+import { weatherApiRequest } from '@/app/lib/d';
 
-interface apiProps {
-  url: string,
-  options?: {
-    method: "POST" | "GET" | undefined, // fetch will default to GET
-    body: object | undefined
-  } | {} | undefined,
-  params?: {
-    lat: number,
-    lon: number,
-    appid: string
-  } | {} | undefined// TODO specify body of Spotify Api call
-}
-
-const useWeatherApi = (props: apiProps) => {
+const useWeatherApi = (props: weatherApiRequest) => {
   const { url, options, params } = props;
   const [data, setData] = useState<object | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
-
 
   useEffect(() => {
     // const abortController = new AbortController();
