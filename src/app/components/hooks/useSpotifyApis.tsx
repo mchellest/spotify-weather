@@ -1,17 +1,33 @@
 import { useState, useEffect } from 'react';
 interface apiProps {
   url: string,
-  method?: "GET" | "POST"
+  method?: 'GET' | 'POST',
+  params?: object | null
 }
 
 const useSpotifyApis = (props: apiProps) => {
-  const { url, method } = props;
+  const { url, method, params } = props;
   const [data, setData] = useState<object | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
 
+  const parseParameters = async (url: string, params: object) => {
+    const urlObject = new URL(url);
+    if (!params || Object.keys(params).length === 0) {
+      return urlObject.toString();
+    }
+
+    for (const [key, value] of Object.entries(params)) {
+      urlObject.searchParams.append(key, value);
+    }
+    return urlObject.toString();
+  }
+
   const fetchData = async (signal: AbortSignal) => {
-    const response = await fetch(url, {
+    console.log("fetchData");
+    const fullUrl = await parseParameters(url, params);
+    console.log(fullUrl);
+    const response = await fetch(fullUrl, {
       signal: signal,
       method: method,
       headers: { 'Authorization': 'Bearer ' + localStorage.access_token }

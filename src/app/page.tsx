@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { spotifyUserDataRequest } from '@/app/lib/requests';
+import { spotifyUserDataRequest, weatherRequest } from '@/app/lib/requests';
 // Hooks
 import { useLocalStorage } from '@/app/components/hooks/useLocalStorage';
 import useSpotifyAuth from '@/app/components/hooks/useSpotifyAuth';
@@ -19,11 +19,7 @@ export default function Home() {
   // Weather state variables
   const [locationPerms, setLocationPerms] = useState<string>("");
   const [userCoordinates, setUserCoordinates] = useLocalStorage("userCoordinates", "{ lat:null, lon:null }");
-  const [weatherData, isWeatherLoading, weatherError] = useWeatherApi({
-    url: 'https://api.openweathermap.org/data/2.5/weather?',
-    options: {},
-    params: { lat: userCoordinates.lat, lon: userCoordinates.lon }
-  })
+  const [weatherData, isWeatherLoading, weatherError] = useWeatherApi(weatherRequest(userCoordinates.lat, userCoordinates.lon));
   const [validLocationPerms, setValidLocationPerms] = useState<boolean | null>(null);
   // Spotify state variables
   const { handleLoginWithSpotify, handleRefreshToken, handleLogoutOfSpotify  } = useSpotifyAuth();
@@ -100,20 +96,20 @@ export default function Home() {
             {spotifyData.display_name}
             {<img src={spotifyData.images[0].url} height="15%" width="15%" />}
           </div>
-          <div>
-            {spotifyError && spotifyError.status === 401 &&
-              <CustomButton 
-                icon={<Renew />} 
-                onclick={handleRefreshToken}
-                text={""} 
-              />}
-            <CustomButton 
-              icon={<Logout />} 
-              onclick={handleLogoutOfSpotify}
-              text={""} 
-            />
-          </div>
         </>}
+        {spotifyError && spotifyError.status === 401 &&
+          <CustomButton 
+            icon={<Renew />} 
+            onclick={handleRefreshToken}
+            text={""} 
+          />}
+        <div>
+          <CustomButton 
+            icon={<Logout />} 
+            onclick={handleLogoutOfSpotify}
+            text={""} 
+          />
+        </div>
       </div>
       <div className="flex items-center justify-center w-screen h-screen mx-auto">
         <div className="basis-1/2 rounded-md w-1/2 h-3/4 bg-white bg-opacity-5 sm:text-blue sm:min-w-[65%]">

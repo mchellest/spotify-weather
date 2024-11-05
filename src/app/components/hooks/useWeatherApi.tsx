@@ -21,8 +21,8 @@ const useWeatherApi = (props: apiProps) => {
 
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchData(url, options, params); //, abortController.signal);
+    // const abortController = new AbortController();
+    fetchData(url, options, params); 
 
     // return () => {
     //   abortController.abort();
