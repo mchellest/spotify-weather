@@ -11,3 +11,19 @@ export interface weaterApiData {
 // export interface spotifyApiData {
 
 // }
+// Spotify types
+export interface Artist {
+  external_urls: object,
+  href: string,
+  id: string,
+  name: string,
+  type: string,
+  uri: string
+}
+export interface Track {
+  name: string;
+  artists: Artist[];
+}
+export interface TrackRecommendations {
+  tracks: Track[];
+}
