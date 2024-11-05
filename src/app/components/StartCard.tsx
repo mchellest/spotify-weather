@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import useSpotifyAuth from '@/app/components/hooks/useSpotifyAuth';
 import { Rotate, CheckmarkFilled, CheckmarkFilledError } from '@carbon/icons-react'
 import CustomButton from '@/app/components/CustomButton';
@@ -38,7 +38,7 @@ const StartCard = (props: StartProps) => {
     }
     const success = (res:any) => {
       setLocationPerms("granted");
-      let coords = res.coords;
+      const coords = res.coords;
       console.log(coords.latitude, coords.longitude);
       setCoordinates({ lat:coords.latitude, lon:coords.longitude });
     };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
+import React from 'react';
 import CustomButton from '@/app/components/CustomButton';
 import { CardsSkeleton } from '@/app/components/skeletons';
 import { spotifyUserTopItems, spotifyRecommendations } from '@/app/lib/requests';
@@ -9,7 +9,7 @@ import { Renew } from '@carbon/icons-react';
 // import useSpotifyAuth from '@/app/components/hooks/useSpotifyAuth';
 import useSpotifyApis from '@/app/components/hooks/useSpotifyApis';
 
-const SpotifyData = React.lazy(() => import ('@/app/components/_Spotify/SpotifyData'));
+// const SpotifyData = React.lazy(() => import ('@/app/components/_Spotify/SpotifyData'));
 
 interface SpotifyCardProps {
   isSpotifyLoading: boolean,
@@ -21,7 +21,7 @@ interface SpotifyCardProps {
 const SpotifyCard = (props: SpotifyCardProps) => {
   const { isSpotifyLoading, spotifyData, spotifyError, handleRefreshToken } = props;
   const [topItemsData, isTopItemsLoading, topItemsError] = useSpotifyApis(spotifyUserTopItems);
-  const [recData, isRecLoading, recError] = useSpotifyApis(spotifyRecommendations({limit: 10, market: "US", seed_artists: "5ioOCIkpBfV9Z8Zm5DP4vH,4IliztYDlfMvzQzbx50o60,4G9wSdX0klmoHfjm9i6DLd,0PCCGZ0wGLizHt2KZ7hhA2"}));
+  const [recData, isRecLoading] = useSpotifyApis(spotifyRecommendations({limit: 10, market: "US", seed_artists: "5ioOCIkpBfV9Z8Zm5DP4vH,4IliztYDlfMvzQzbx50o60,4G9wSdX0klmoHfjm9i6DLd,0PCCGZ0wGLizHt2KZ7hhA2"}));
 
   const displayUserData = (data:any) => {
     return (
